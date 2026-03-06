@@ -5,9 +5,6 @@ node_modules/
 dist/
 out/
 
-# Extension packaging
-*.vsix
-
 # VS Code files
 .vscode-test/
 .history/
