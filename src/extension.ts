@@ -36,36 +36,25 @@ export function activate(context: vscode.ExtensionContext) {
 			for await (const data of stream) {
 				const lowerData = data.toLowerCase();
 
-				if (mode === 'amature') {
-					// Real-time processing for Amature Mode
-					let language = detectLanguage(lowerData);
+				let language = detectLanguage(lowerData);
 
-					if (language !== 'unknown') {
-						detectedLanguage = language;
-						executionLanguages.set(e.terminal, language);
-					} else {
-						language = detectedLanguage;
-					}
-
-					if (language !== 'unknown') {
-						const eventType = parser(lowerData, language);
-						if (eventType) {
-							executionEvents.get(e.terminal)?.add(eventType);
-							if (!audioTimeout) {
-								playAudio(eventType);
-								audioTimeout = setTimeout(() => {
-									audioTimeout = null;
-								}, AMATURE_AUDIO_DEBOUNCE_MS);
-							}
-						}
-					}
+				if (language !== 'unknown') {
+					detectedLanguage = language;
+					executionLanguages.set(e.terminal, language);
 				} else {
-					// Detection during execution for Mature Mode summary
-					if (detectedLanguage === 'unknown') {
-						const lang = detectLanguage(lowerData);
-						if (lang !== 'unknown') {
-							detectedLanguage = lang;
-							executionLanguages.set(e.terminal, lang);
+					language = detectedLanguage;
+				}
+
+				if (language !== 'unknown') {
+					const eventType = parser(lowerData, language);
+					if (eventType) {
+						executionEvents.get(e.terminal)?.add(eventType);
+						// Real-time processing for Amature Mode
+						if (mode === 'amature' && !audioTimeout) {
+							playAudio(eventType);
+							audioTimeout = setTimeout(() => {
+								audioTimeout = null;
+							}, AMATURE_AUDIO_DEBOUNCE_MS);
 						}
 					}
 				}
@@ -103,10 +92,12 @@ export function activate(context: vscode.ExtensionContext) {
 				playAudio('test_failed');
 			} else if (hasTestPassed && !hasError) {
 				playAudio('test_passed');
-			} else if (hasError) {
-				playAudio('error');
+			} else if (events.has('syntax_error')) {
+				playAudio('syntax_error');
 			} else if (events.has('build_failure')) {
 				playAudio('build_failure');
+			} else if (events.has('error')) {
+				playAudio('error');
 			} else if (events.has('build_success') || events.has('compiled')) {
 				playAudio('build_success');
 			} else if (e.exitCode !== undefined && e.exitCode !== 0 && lang !== 'unknown') {

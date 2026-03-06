@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import { exec } from 'child_process';
 import { EventType } from '../types/eventTypes';
 import { AUDIO_MAP } from './constants';
 
@@ -25,11 +26,20 @@ export const playAudio = (event: EventType) => {
             return;
         }
 
-        player.play(audioPath, (err: any) => {
-            if (err && !err.killed) {
-                console.error(`Shout Out Terminal: Failed to play audio ${audioPath}`, err);
-            }
-        });
+        if (process.platform === 'win32') {
+            // Use native PowerShell on Windows to avoid missing dependencies like cmdmp3
+            exec(`powershell -c (New-Object Media.SoundPlayer '${audioPath}').PlaySync();`, (error) => {
+                if (error) {
+                    console.error(`Shout Out Terminal: Failed to play audio on Windows ${audioPath}`, error);
+                }
+            });
+        } else {
+            player.play(audioPath, (err: any) => {
+                if (err && !err.killed) {
+                    console.error(`Shout Out Terminal: Failed to play audio ${audioPath}`, err);
+                }
+            });
+        }
 
     } catch (error) {
         console.error('Shout Out Terminal: Error in audio playback engine:', error);
