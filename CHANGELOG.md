@@ -1,15 +1,19 @@
-# Changelog
+# Change Log
 
-All notable changes to **Shout Out Terminal** will be documented in this file.
+All notable changes to the "shout-out-terminal" extension will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-
-## [0.0.1] - 2026-03-06
+## [0.1.0] - 2026-03-07
 
 ### Added
-- 🎵 Real-time audio feedback for terminal events (errors, build results, test outcomes)
-- ⚡ **Amature Mode** — instant audio as events are detected
-- 🧘 **Mature Mode** — summary audio after command completes
-- 🌍 Cross-platform WAV audio support (macOS, Linux, Windows)
-- 🔧 Support for Node.js, Python, and Java ecosystems
-- 🧪 Test detection for Jest, pytest, and JUnit
+- **Gamified Statistics Dashboard**: Added a massively customized HTML Webview to the Activity Sidebar. Fully interactive, persistently tracking all underlying Terminal events so you can gamify your daily Developer Health.
+- **Dedicated Terminal Architecture**: Re-engineered the stream parsers to completely ignore all VS Code terminals by default! You must now explicitly run `Shout Out Terminal: Open Terminal` to spawn the isolated sandbox. No more accidental audio spam!
+- **Accurate Graphics**: Completely overhauled the tiny logo PNG into a massive, gorgeous, fully scalable SVG icon (`media/sidebar-icon.svg`) representing a Terminal Megaphone emitting sound waves. Perfect dark/light mode integration.
+- **Bi-Directional Sync**: The UI sidebar automatically re-renders and counts up whenever an audio event strikes without any gross DOM re-paints.
+
+### Fixed
+- **Windows System Audio**: Destroyed the broken `play-sound` dependency on `win32` platforms. Rewrote the Windows adapter to natively call `powershell (New-Object Media.SoundPlayer)` seamlessly fixing broken `.wav` headers.
+- **Concurrency Overlap Eliminator**: Annoyed by walls of overlapping chaotic noise? Reprogrammed `src/utils/audio.ts` to aggressively manage singletons. If an error sound triggers mid-sentence, it throws a hardcore SIGKILL/taskkill against the node process, muting the old audio instantly before resolving the new sound.
+- **Mature Mode Regex Bugs**: Fixed a massive flaw where Mature Mode just blindly returned "Error" for everything. It now accurately parses `syntax_errors`, `build_failures`, and `warnings` strictly sequentially.
+
+## [0.0.1] - Initial Release
+- Initial prototype.

@@ -1,8 +1,8 @@
 {
   "name": "shout-out-terminal",
   "displayName": "Shout Out Terminal",
-  "description": "🔊 Your terminal talks back! Get instant audio feedback for errors, build results, test outcomes, and more — right inside VS Code.",
-  "version": "0.0.1",
+  "description": "An interactive VS Code extension that plays fun sound effects directly based on your terminal outputs!",
+  "version": "0.1.0",
   "publisher": "Darshan",
   "author": {
     "name": "Darshan",
@@ -47,10 +47,46 @@
   "contributes": {
     "commands": [
       {
-        "command": "shout-out-terminal.helloWorld",
-        "title": "Hello World"
+        "command": "shout-out-terminal.openTerminal",
+        "title": "Open Shout Out Terminal",
+        "category": "Shout Out Terminal"
+      },
+      {
+        "command": "shout-out-terminal.resetMetrics",
+        "title": "Reset Track Record Statistics",
+        "category": "Shout Out Terminal",
+        "icon": "$(trash)"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "shout-out-terminal.resetMetrics",
+          "when": "view == shout-out-terminal.metricsView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "shout-out-terminal-container",
+          "title": "Shout Out Terminal",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "shout-out-terminal-container": [
+        {
+          "type": "webview",
+          "id": "shout-out-terminal.metricsView",
+          "name": "Track Record",
+          "icon": "media/icon.png",
+          "contextualTitle": "Shout Out Metrics"
+        }
+      ]
+    },
     "configuration": {
       "title": "Shout Out Terminal",
       "properties": {

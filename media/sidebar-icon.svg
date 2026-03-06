@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+  <!-- Rounded Square Outline (outer 24x24 box, 2px thick, rx=4) -->
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M6 2h12a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4Zm0 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6Z" />
+  
+  <!-- Solid Triangle (Play button style terminal prompt) -->
+  <path d="M6.5 7 L14.5 12 L6.5 17 Z" />
+  
+  <!-- Underscore Cursor -->
+  <rect x="12" y="15" width="5.5" height="2" rx="0.5" />
+</svg>
