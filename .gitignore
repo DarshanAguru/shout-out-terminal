@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Build directories
+dist/
+out/
+
+# Extension packaging
+*.vsix
+
+# VS Code files
+.vscode-test/
+.history/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
