@@ -2,6 +2,12 @@
 
 All notable changes to the "shout-out-terminal" extension will be documented in this file.
 
+## [0.1.1] - 2026-03-07
+
+### Changed
+- **Metrics Dashboard UI Upgrade**: Completely redesigned the "Track Record" Activity Sidebar webview. It now features a responsive grid layout, dynamic hover interactions, staggered entrance animations, and a modern glassmorphism aesthetic.
+- **Sidebar Icon Fix**: Fixed an issue where the SVG sidebar icon (`sidebar-icon.svg`) would render incorrectly or as a solid block because of missing width and height attributes, and ensuring the `views` configurations point to the SVG instead of the old PNG.
+
 ## [0.1.0] - 2026-03-07
 
 ### Added

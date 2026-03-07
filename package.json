@@ -2,7 +2,7 @@
   "name": "shout-out-terminal",
   "displayName": "Shout Out Terminal",
   "description": "An interactive VS Code extension that plays fun sound effects directly based on your terminal outputs!",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "Darshan",
   "author": {
     "name": "Darshan",

@@ -73,18 +73,20 @@ export class MetricsProvider implements vscode.WebviewViewProvider {
     }
 
     private _getHtmlForWebview(webview: vscode.Webview) {
-        const bannerUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'banner.png'));
-        const iconUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'icon.png'));
+        const iconUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'sidebar-icon.svg'));
 
-        const metricsHtml = this.displayOrder.map(item => {
+        const metricsHtml = this.displayOrder.map((item, index) => {
             const count = this.context.globalState.get<number>(`${this.storageKeyPrefix}${item.key}`) || 0;
+            // Add staggered animation delay
+            const delay = index * 0.05;
+            
             return `
-                <div class="metric-card" style="border-left-color: ${item.color}">
+                <div class="metric-card" style="--metric-color: ${item.color}; animation-delay: ${delay}s">
+                    <div class="metric-count">${count}</div>
                     <div class="metric-info">
-                        <i class="codicon codicon-${item.icon}" style="color: ${item.color}"></i>
+                        <i class="codicon codicon-${item.icon}"></i>
                         <span class="metric-label">${item.label}</span>
                     </div>
-                    <div class="metric-count">${count}</div>
                 </div>
             `;
         }).join('');
@@ -97,107 +99,251 @@ export class MetricsProvider implements vscode.WebviewViewProvider {
                 <title>Shout Out Metrics</title>
                 <link href="${webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'))}" rel="stylesheet" />
                 <style>
+                    :root {
+                        --bg-gradient-start: rgba(26, 26, 46, 0.95);
+                        --bg-gradient-end: rgba(22, 33, 62, 0.95);
+                        --card-bg: var(--vscode-editor-background);
+                        --card-border: var(--vscode-widget-border);
+                        --card-hover-bg: var(--vscode-list-hoverBackground);
+                        --text-primary: var(--vscode-foreground);
+                        --text-secondary: #94a3b8;
+                    }
+
                     body {
                         font-family: var(--vscode-font-family);
                         padding: 0;
                         margin: 0;
                         background-color: transparent;
-                        color: var(--vscode-foreground);
+                        color: var(--text-primary);
                         display: flex;
                         flex-direction: column;
                         align-items: center;
+                        box-sizing: border-box;
                     }
+
+                    * {
+                        box-sizing: inherit;
+                    }
+
+                    @keyframes slideUpFade {
+                        from {
+                            opacity: 0;
+                            transform: translateY(15px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+
                     .hero {
                         width: 100%;
                         display: flex;
                         flex-direction: column;
                         align-items: center;
-                        padding: 20px 0;
-                        background: linear-gradient(135deg, rgba(26,26,46,0.8) 0%, rgba(22,33,62,0.8) 100%);
+                        padding: 24px 0 20px 0;
+                        background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
                         border-bottom: 1px solid var(--vscode-panel-border);
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                        margin-bottom: 15px;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                        margin-bottom: 20px;
+                        position: relative;
+                        overflow: hidden;
                     }
+
+                    .hero::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 2px;
+                        background: linear-gradient(90deg, #4ade80, #818cf8, #fbbf24, #f43f5e);
+                        opacity: 0.8;
+                    }
+
                     .logo {
-                        width: 80px;
-                        height: 80px;
-                        margin-bottom: 10px;
-                        filter: drop-shadow(0px 0px 8px rgba(129, 140, 248, 0.4));
+                        width: 64px;
+                        height: 64px;
+                        margin-bottom: 12px;
+                        filter: drop-shadow(0px 0px 12px rgba(129, 140, 248, 0.5));
+                        animation: slideUpFade 0.6s ease-out forwards;
                     }
+
                     .title {
-                        font-size: 1.2rem;
-                        font-weight: 600;
+                        font-size: 1.25rem;
+                        font-weight: 700;
                         color: #ffffff;
                         letter-spacing: 0.5px;
                         margin: 0;
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                        animation: slideUpFade 0.6s ease-out 0.1s forwards;
+                        opacity: 0;
                     }
+
                     .subtitle {
-                        font-size: 0.85rem;
-                        color: #94a3b8;
-                        margin-top: 4px;
+                        font-size: 0.75rem;
+                        color: var(--text-secondary);
+                        margin-top: 6px;
                         text-transform: uppercase;
-                        letter-spacing: 1px;
+                        letter-spacing: 1.5px;
+                        font-weight: 600;
+                        animation: slideUpFade 0.6s ease-out 0.2s forwards;
+                        opacity: 0;
                     }
+
                     .metrics-container {
-                        width: 90%;
+                        width: 100%;
+                        padding: 0 16px 24px 16px;
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                        gap: 12px;
+                    }
+
+                    .metric-card {
+                        background-color: var(--card-bg);
+                        border: 1px solid var(--card-border);
+                        border-top: 3px solid var(--metric-color);
+                        border-radius: 8px;
+                        padding: 16px 12px;
                         display: flex;
                         flex-direction: column;
-                        gap: 12px;
-                        padding-bottom: 20px;
-                    }
-                    .metric-card {
-                        background-color: var(--vscode-editor-background);
-                        border: 1px solid var(--vscode-widget-border);
-                        border-left-width: 4px;
-                        border-radius: 6px;
-                        padding: 12px 16px;
-                        display: flex;
-                        justify-content: space-between;
+                        justify-content: center;
                         align-items: center;
-                        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                        transition: transform 0.15s ease, box-shadow 0.15s ease;
+                        text-align: center;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                        position: relative;
+                        overflow: hidden;
+                        
+                        /* Animation */
+                        opacity: 0;
+                        animation: slideUpFade 0.5s ease-out forwards;
                     }
+                    
+                    /* Subtle background glow based on metric color */
+                    .metric-card::after {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: radial-gradient(circle at top, var(--metric-color) 0%, transparent 70%);
+                        opacity: 0.05;
+                        pointer-events: none;
+                        transition: opacity 0.3s ease;
+                    }
+
                     .metric-card:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                        background-color: var(--vscode-list-hoverBackground);
+                        transform: translateY(-4px) scale(1.02);
+                        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--metric-color);
+                        background-color: var(--card-hover-bg);
+                        z-index: 1;
                     }
+                    
+                    .metric-card:hover::after {
+                        opacity: 0.15;
+                    }
+
+                    .metric-count {
+                        font-size: 2rem;
+                        font-weight: 800;
+                        font-variant-numeric: tabular-nums;
+                        color: var(--metric-color);
+                        line-height: 1;
+                        margin-bottom: 12px;
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }
+
                     .metric-info {
                         display: flex;
+                        flex-direction: column;
                         align-items: center;
-                        gap: 10px;
+                        gap: 6px;
+                        width: 100%;
                     }
+
                     .metric-info i {
-                        font-size: 1.2rem;
+                        font-size: 1.1rem;
+                        color: var(--text-secondary);
+                        transition: color 0.3s ease, transform 0.3s ease;
                     }
+                    
+                    .metric-card:hover .metric-info i {
+                        color: var(--text-primary);
+                        transform: scale(1.1);
+                    }
+
                     .metric-label {
-                        font-size: 0.95rem;
-                        font-weight: 500;
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        color: var(--text-secondary);
+                        line-height: 1.2;
+                        transition: color 0.3s ease;
                     }
-                    .metric-count {
-                        font-size: 1.4rem;
-                        font-weight: 700;
-                        font-variant-numeric: tabular-nums;
+                    
+                    .metric-card:hover .metric-label {
+                        color: var(--text-primary);
                     }
+
+                    .actions-container {
+                        width: 100%;
+                        padding: 0 16px 24px 16px;
+                        display: flex;
+                        justify-content: center;
+                    }
+
                     .reset-btn {
-                        background-color: var(--vscode-button-background);
-                        color: var(--vscode-button-foreground);
-                        border: none;
-                        padding: 8px 16px;
-                        border-radius: 4px;
-                        font-size: 0.9rem;
+                        background-color: transparent;
+                        color: var(--text-secondary);
+                        border: 1px solid var(--card-border);
+                        padding: 10px 20px;
+                        border-radius: 6px;
+                        font-size: 0.85rem;
+                        font-weight: 600;
                         cursor: pointer;
                         display: flex;
                         align-items: center;
                         gap: 8px;
-                        margin-top: 10px;
-                        margin-bottom: 20px;
-                        width: 90%;
+                        width: 100%;
                         justify-content: center;
-                        transition: background-color 0.2s;
+                        transition: all 0.2s ease;
+                        opacity: 0;
+                        animation: slideUpFade 0.6s ease-out 0.8s forwards;
                     }
+
+                    .reset-btn i {
+                        font-size: 1rem;
+                    }
+
                     .reset-btn:hover {
-                        background-color: var(--vscode-button-hoverBackground);
+                        background-color: rgba(225, 29, 72, 0.1);
+                        color: #e11d48;
+                        border-color: #e11d48;
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 8px rgba(225, 29, 72, 0.15);
+                    }
+                    
+                    .reset-btn:active {
+                        transform: translateY(1px);
+                    }
+
+                    /* Scrollbar Styling */
+                    ::-webkit-scrollbar {
+                        width: 10px;
+                    }
+                    ::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    ::-webkit-scrollbar-thumb {
+                        background: var(--vscode-scrollbarSlider-background);
+                        border-radius: 5px;
+                    }
+                    ::-webkit-scrollbar-thumb:hover {
+                        background: var(--vscode-scrollbarSlider-hoverBackground);
+                    }
+                    ::-webkit-scrollbar-thumb:active {
+                        background: var(--vscode-scrollbarSlider-activeBackground);
                     }
                 </style>
             </head>
@@ -212,20 +358,29 @@ export class MetricsProvider implements vscode.WebviewViewProvider {
                     ${metricsHtml}
                 </div>
 
-                <button class="reset-btn" id="resetBtn">
-                    <i class="codicon codicon-trash"></i> Reset All Metrics
-                </button>
+                <div class="actions-container">
+                    <button class="reset-btn" id="resetBtn" title="Reset all track record statistics to zero">
+                        <i class="codicon codicon-trash"></i> Reset Analytics
+                    </button>
+                </div>
 
                 <script>
                     const vscode = acquireVsCodeApi();
                     
                     document.getElementById('resetBtn').addEventListener('click', () => {
+                        // Optional: Add a subtle click effect
+                        const btn = document.getElementById('resetBtn');
+                        btn.style.transform = 'scale(0.95)';
+                        setTimeout(() => btn.style.transform = '', 150);
+                        
                         vscode.postMessage({ type: 'reset' });
                     });
 
                     window.addEventListener('message', event => {
                         const message = event.data;
-                        if (message.type === 'update') {}
+                        if (message.type === 'update') {
+                            // Can add subtle refresh animation here if needed
+                        }
                     });
                 </script>
             </body>
