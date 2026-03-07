@@ -72,7 +72,7 @@
         {
           "id": "shout-out-terminal-container",
           "title": "Shout Out Terminal",
-          "icon": "media/icon.png"
+          "icon": "media/sidebar-icon.svg"
         }
       ]
     },
@@ -82,7 +82,7 @@
           "type": "webview",
           "id": "shout-out-terminal.metricsView",
           "name": "Track Record",
-          "icon": "media/icon.png",
+          "icon": "media/sidebar-icon.svg",
           "contextualTitle": "Shout Out Metrics"
         }
       ]
